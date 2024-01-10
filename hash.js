@@ -1,18 +1,19 @@
+//Apparently my hashmap was supposed to store key,value pairs unordered?
+
 // Hasmap that overwrites on collision.
 // Bucket size increases when load factor >= 0.75
 function hashMap() {
   let buckets = [];
-  buckets.length = 16;
+  buckets.length = 8;
 
-//// Need to check for load factor 
-//// if factor is >=0.75, extend buckets and change hashcode modulo to bigger number
+  const primeNumber = 17;
+  let hashCode = 0;
+  let modulus = 8;
+
   const hash = (string) => {
-    let hashCode = 0;
-
-    const primeNumber = 17;
     for (let i = 0; i < string.length; i++) {
         hashCode = primeNumber * hashCode + string.charCodeAt(i);
-        hashCode = hashCode % 16;
+        hashCode = hashCode % modulus;
     }
     return hashCode;
   }
@@ -24,6 +25,14 @@ function hashMap() {
       throw new Error("Trying to access index out of bound");
     }
     buckets[key] = value;
+
+//// Need to check for load factor 
+//// If load factor >=0.75, extend buckets and increase hashcode modulus  
+    currentLength = length();
+    if (currentLength / buckets.length >= 0.75) {
+        buckets.length = buckets.length * 2;
+        modulus = modulus * 2;
+    }
   }
     
   const get = (key) => {
@@ -57,7 +66,42 @@ function hashMap() {
     return count;
   }
 
+  const clear = () => {
+    for (let i = 0; i < buckets.length; i++) {
+      buckets[i] = undefined;
+    }
+  }
+
+  const keys = () => {
+    let keysBucket = [];
+    for (let i = 0; i < buckets.length; i++) {
+      if (has(i) == true) {
+        keysBucket.push(i);
+      }
+    }
+    return keysBucket;
+  }
   
+  const values = () => {
+    let valuesBucket = [];
+    for (let i = 0; i < buckets.length; i++) {
+      if (has(i) == true) {
+        valuesBucket.push(buckets[i]);
+      }
+    }
+    return valuesBucket;
+  }
+
+  const entries = () => {
+    let entries = [];
+    for (let i = 0; i < buckets.length; i++) {
+        if (has(i) == true) {
+          entries.push([i,buckets[i]]);
+        }
+      }
+      return entries;
+  }
+
   return {
     buckets,
     hash,
@@ -65,24 +109,13 @@ function hashMap() {
     get,
     has,
     remove,
-    length
+    length,
+    clear,
+    keys,
+    values,
+    entries
   }
 }
-
-let myHashMap1 = hashMap();
-console.log(myHashMap1.hash("George"));
-console.log(myHashMap1.hash("G Squared"));
-
-myHashMap1.set(myHashMap1.hash("George"), "George");
-myHashMap1.set(myHashMap1.hash("G Squared"), "G Squared");
-
-console.log("get 9:", myHashMap1.get(9));
-
-console.log("test:", myHashMap1.length());
-
-
-let myHashMap1Buckets = myHashMap1.buckets;
-console.log(myHashMap1Buckets);
 
 
 
