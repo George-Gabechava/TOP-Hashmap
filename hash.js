@@ -1,7 +1,4 @@
-//Apparently my hashmap was supposed to store key,value pairs unordered?
-
 // Hasmap that overwrites on collision.
-// Bucket size increases when load factor >= 0.75
 function hashMap() {
   let buckets = [];
   buckets.length = 8;
@@ -26,7 +23,6 @@ function hashMap() {
     }
     buckets[key] = value;
 
-//// Need to check for load factor 
 //// If load factor >=0.75, extend buckets and increase hashcode modulus  
     currentLength = length();
     if (currentLength / buckets.length >= 0.75) {
